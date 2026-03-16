@@ -1,0 +1,42 @@
+name: Generate Flutter Project
+
+on:
+  push:
+    paths:
+      - 'config/**'
+
+jobs:
+  create-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'
+
+      - name: Read Config
+        run: |
+          echo "Reading config..."
+          source config/project.env
+          echo "Project Name: $PROJECT_NAME"
+          echo "Package: $PACKAGE_NAME"
+          echo "Language: $LANG"
+
+      - name: Create Flutter Project
+        run: |
+          flutter create \
+            --platforms=android \
+            --org "$PACKAGE_NAME" \
+            --project-name "$PROJECT_NAME" \
+            --android-language "$LANG" \
+            projects/$PROJECT_NAME
+
+      - name: Upload Project Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PROJECT_NAME }}
+          path: projects/${{ env.PROJECT_NAME }}
