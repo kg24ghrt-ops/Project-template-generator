@@ -8,9 +8,14 @@ on:
 jobs:
   create-project:
     runs-on: ubuntu-latest
+    env:
+      # Load project variables from the config file
+      PROJECT_NAME: ${{ github.event.head_commit.message }}
+      PACKAGE_NAME: ${{ github.event.head_commit.message }}
+      LANG: ${{ github.event.head_commit.message }}
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Flutter
@@ -36,7 +41,7 @@ jobs:
             projects/$PROJECT_NAME
 
       - name: Upload Project Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PROJECT_NAME }}
-          path: projects/${{ env.PROJECT_NAME }}
+          name: $PROJECT_NAME
+          path: projects/$PROJECT_NAME
